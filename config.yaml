@@ -1,0 +1,27 @@
+### REQUIRED ARGUMENTS BY USER
+rawdir:
+  '/scripts/test/fastq'
+output_dir:
+  '/output'
+group1: [
+  'simulated1',
+  'simulated2'
+]
+group2: [
+  'simulated3',
+  'simulated4'
+]
+samples: [
+  'simulated1',
+  'simulated2',
+  'simulated3',
+  'simulated4'
+]
+ref:
+  '/scripts/test/lambda-phage.fa'
+
+gtf_annotation_file:
+  'annotation/gene-locations-hg38.csv.gz'
+  
+computing_threads:
+  8

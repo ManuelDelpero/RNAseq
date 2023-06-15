@@ -11,17 +11,19 @@ qc_dir = output_dir + '/qc'
 stats_dir = output_dir + '/stats'
 gene_annotation_file = config['gtf_annotation_file']
 ref_fasta = config['ref']
-ref_dir = output_dir + '/reference'
+ref_dir = output_dir + '/reference/'
 count_dir = output_dir + '/counts'
 num_threads = config['computing_threads']
 
 results_counts = expand(count_dir + '/{sample}_count.txt', sample = SAMPLES)
-results_fastqc = expand(qc_dir + '/fastqc/{sample}_fastqc.html', sample = SAMPLES)
+results_fastqc = expand(qc_dir + '/fastqc/{sample}_sorted_fastqc.html', sample = SAMPLES)
+results_qualimap = expand(qc_dir + '/qualimap/{sample}/qualimapReport.html', sample = SAMPLES)
 
 rule all:
     input:
         results_counts + 
-        results_fastqc
+        results_fastqc +
+        results_qualimap
 
 rule fastp:
     """
@@ -51,15 +53,23 @@ rule hisat2_index:
     input:
         config['ref']
     output:
-        ref_dir
+        directory(ref_dir)
     log:
         log_dir + '/Hisat2_index.log'
     threads:
-	    num_threads
+        num_threads
     benchmark:
         benchmark_dir + '/Hisat2/Hisat2_index.tsv'
     shell:
-        'hisat2-build {input} {output} -p {threads} &> {log}'
+        """
+        if [ ! -d "{ref_dir}" ]; then
+            mkdir -p "{ref_dir}"
+            hisat2-build "{input}" "{ref_dir}/reference" -p {threads} &> "{log}"
+        else
+            echo "Reference directory '{ref_dir}' already exists. Please delete and restart."
+            exit 1
+        fi
+        """
 
 
 rule hisat2:
@@ -75,12 +85,12 @@ rule hisat2:
     log:
         log_dir + '/{sample}.Hisat2.log'
     threads:
-	    num_threads
+        num_threads
     benchmark:
         benchmark_dir + '/Hisat2/{sample}.tsv'
     shell:
         """
-        hisat2 -x {input.ref} -1 {input.R1} -2 {input.R2} -S {output} -p {threads} &> {log}
+        hisat2 -x {input.ref}/reference -1 {input.R1} -2 {input.R2} -S {output} -p {threads} &> {log}
         """
 		
 rule sort:
@@ -99,7 +109,26 @@ rule sort:
         benchmark_dir + '/samtools_sort/{sample}.tsv'
     shell:
         """
-        samtools sort {input} -o {output} -@ {threads} -m 16G &> {log}
+        samtools sort {input} -o {output} -@ {threads} -m 1G &> {log}
+        """
+
+rule bam_index:
+    """
+    Create Bam index
+    """
+    input:
+        bam = rules.sort.output,
+    output:
+        alignment_dir + '/hisat2/{sample}_sorted.bam.bai'
+    log:
+        log_dir + '/{sample}_samtools_index.log'
+    threads:
+        num_threads	
+    benchmark:
+        benchmark_dir + '/samtools_index/{sample}.tsv'
+    shell:
+        """
+        samtools index {input} {output} -@ {threads} -m 1G &> {log}
         """
 
 rule fastqc:
@@ -109,7 +138,7 @@ rule fastqc:
     input:
         rules.sort.output
     output:
-        qc_dir + '/fastqc/{sample}_fastqc.html'
+        qc_dir + '/fastqc/{sample}_sorted_fastqc.html'
     log:
         log_dir + '/{sample}_fastqc.log'
     threads:
@@ -125,7 +154,8 @@ rule Count:
     """
     input:
         bam = rules.sort.output,
-        annotation = gene_annotation_file
+        annotation = gene_annotation_file,
+        index = alignment_dir + '/hisat2/{sample}_sorted.bam.bai'
     output:
         count_dir + '/{sample}_count.txt'
     benchmark:
@@ -133,4 +163,21 @@ rule Count:
     shell:
         """
         htseq-count -f bam -r pos -t exon -i gene_id -s no {input.bam} {input.annotation} &> {output}
+        """
+		
+rule qualimap:
+    """
+    Calculate bam statistics
+    """
+    input:
+        bam = rules.sort.output,
+    output:
+        qc_dir + '/qualimap/{sample}/qualimapReport.html'
+    log:
+        log_dir + '/{sample}_qualimap.log'
+    benchmark:
+        benchmark_dir + '/qualimap/{sample}.tsv'
+    shell:
+        """
+        qualimap bamqc -bam {input.bam} -outdir {qc_dir}/qualimap/{wildcards.sample}/ --java-mem-size=30000M &> {log}
         """

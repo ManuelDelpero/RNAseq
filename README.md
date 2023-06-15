@@ -24,11 +24,6 @@ This will create a new environment called "RNAseq" and install all the required 
 
 ## Activating the Conda Environment and run the pipeline
 
-Before running the pipeline, you need to activate the "RNAseq" environment. You can do this by running the following command:
-
    ```bash
    conda activate RNAseq
-
-To run the pipeline, execute the following command:
-
-    snakemake --cores <num_cores>
+   snakemake --cores <num_cores>

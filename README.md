@@ -30,5 +30,5 @@ Before running the pipeline, you need to activate the "RNAseq" environment. You 
    conda activate RNAseq
 
 To run the pipeline, execute the following command:
-    ```bash
+
     snakemake --cores <num_cores>

@@ -22,14 +22,12 @@ Make sure you have Conda installed on your system. If you don't have Conda insta
    
 This will create a new environment called "RNAseq" and install all the required dependencies.
 
-## Activating the Conda Environment
+## Activating the Conda Environment and run the pipeline
 
 Before running the pipeline, you need to activate the "RNAseq" environment. You can do this by running the following command:
 
    ```bash
    conda activate RNAseq
-
-## Running the Pipeline
 
 To run the pipeline, execute the following command:
     ```bash

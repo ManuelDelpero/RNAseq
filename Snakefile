@@ -148,7 +148,7 @@ rule fastqc:
     shell:
         'fastqc -o $(dirname {output}) {input} &> {log}'
 		
-rule Count:
+rule count:
     """
     Calculate raw reads count with HTseq
     """
@@ -181,3 +181,7 @@ rule qualimap:
         """
         qualimap bamqc -bam {input.bam} -outdir {qc_dir}/qualimap/{wildcards.sample}/ --java-mem-size=30000M &> {log}
         """
+
+
+onsuccess:
+    shell('multiqc {output_dir} -o {output_dir}')

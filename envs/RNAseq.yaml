@@ -4,10 +4,13 @@ channels:
   - bioconda
   - defaults
 dependencies:
-  - fastqc=0.12.1
+  - fastqc=0.12.1=hdfd78af_0
   - samtools=1.10
-  - snakemake=7.25.0
-  - bioconda::fastp=0.20.1
-  - bioconda::hisat2=2.2.1
+  - snakemake=7.25.0=hdfd78af_1
+  - fastp=0.20.1
+  - hisat2=2.2.1
+  - qualimap
+  - r-base=4.1.1
   - pip:
-    - htseq==0.13.5
+    - HTSeq==0.12.4
+    - multiqc==1.10

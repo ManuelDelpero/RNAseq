@@ -1,3 +1,4 @@
+import os
 configfile: "config.yaml"
 
 SAMPLES = config['samples']
@@ -8,6 +9,7 @@ log_dir = output_dir + '/logs'
 benchmark_dir = log_dir + '/benchmarks'
 alignment_dir = output_dir + '/alignment'
 qc_dir = output_dir + '/qc'
+deseq2_dir = output_dir + '/dex'
 stats_dir = output_dir + '/stats'
 gene_annotation_file = config['gtf_annotation_file']
 ref_fasta = config['ref']
@@ -18,12 +20,14 @@ num_threads = config['computing_threads']
 results_counts = expand(count_dir + '/{sample}_count.txt', sample = SAMPLES)
 results_fastqc = expand(qc_dir + '/fastqc/{sample}_sorted_fastqc.html', sample = SAMPLES)
 results_qualimap = expand(qc_dir + '/qualimap/{sample}/qualimapReport.html', sample = SAMPLES)
+results_dex = expand(output_dir + '/dex/Volcano_Plot.pdf')
 
 rule all:
     input:
         results_counts + 
         results_fastqc +
-        results_qualimap
+        results_qualimap +
+        results_dex
 
 rule fastp:
     """
@@ -182,6 +186,32 @@ rule qualimap:
         qualimap bamqc -bam {input.bam} -outdir {qc_dir}/qualimap/{wildcards.sample}/ --java-mem-size=30000M &> {log}
         """
 
-
+if len(config['group1']) > 3 and len(config['group2']) > 3:
+    rule deseq2:
+        input:
+            counts = expand(count_dir + '/{sample}_count.txt', sample=SAMPLES)
+        output:
+            deseq2_output = deseq2_dir + '/DE_analysis.csv',
+            normalized_counts = deseq2_dir + '/Normalized_counts.csv',
+            heatmap = deseq2_dir + '/Heatmap.pdf',
+            volcano_plot = deseq2_dir + '/Volcano_Plot.pdf'
+        log:
+            log_dir + '/deseq2.log'
+        params:
+            group1 = config['group1'],
+            group2 = config['group2']
+        shell:
+            '''
+            Rscript scripts/Dex.R "{input.counts}" \
+                {params.group1} \
+                {params.group2} 
+                &> {log}
+            '''
+else:
+    print("Not enaugh samples to perform DE analysis, at least 3 samples per group are needed")
+    volcano_plot_path = os.path.join(deseq2_dir, 'Volcano_Plot.pdf')
+    os.makedirs(deseq2_dir, exist_ok=True)
+    open(volcano_plot_path, 'w').close()
+      
 onsuccess:
     shell('multiqc {output_dir} -o {output_dir}')

@@ -4,7 +4,7 @@ This Snakemake pipeline processes and analyzes RNA sequencing data using various
 
 ## Prerequisites
 
-Make sure you have Mamba installed on your system. If you don't have Mmaba installed, you can follow the instructions at [mamba.io](https://mamba.readthedocs.io/en/latest/installation.html) to install Mmaba.
+Make sure you have Mamba installed on your system. If you don't have Mamba installed, you can follow the instructions at [mamba.io](https://mamba.readthedocs.io/en/latest/installation.html) to install Mmaba.
 
 ## Pipeline Setup
 

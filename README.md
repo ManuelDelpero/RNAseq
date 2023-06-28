@@ -4,7 +4,7 @@ This Snakemake pipeline processes and analyzes RNA sequencing data using various
 
 ## Prerequisites
 
-Make sure you have Conda installed on your system. If you don't have Conda installed, you can follow the instructions at [conda.io](https://conda.io/projects/conda/en/latest/user-guide/install/) to install Conda.
+Make sure you have Mamba installed on your system. If you don't have Mmaba installed, you can follow the instructions at [mamba.io](https://mamba.readthedocs.io/en/latest/installation.html) to install Mmaba.
 
 ## Pipeline Setup
 
@@ -13,10 +13,7 @@ Make sure you have Conda installed on your system. If you don't have Conda insta
 
 ## Creating the Conda Environment
 
-1. Install Mamba, a faster alternative to Conda, by running the following command:
-   ```bash
-   conda install mamba -n base -c conda-forge
-2. Create a new Conda environment named "RNAseq" and install the dependencies from the `environment.yaml` file by running the following command:
+1. Create a new environment named "RNAseq" and install the dependencies from the `environment.yaml` file by running the following command:
    ```bash
    mamba env create -f envs/RNAseq.yaml
    

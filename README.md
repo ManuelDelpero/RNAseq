@@ -26,9 +26,7 @@ This will create a new environment called "RNAseq" and install all the required 
    snakemake --cores <num_cores>
 
 
-## Output Directory Structure
-
-The pipeline generates the following output directory structure:
+## The pipeline generates the following output directory structure:
 
 output/
 ├── alignment/

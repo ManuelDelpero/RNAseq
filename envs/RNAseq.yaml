@@ -17,4 +17,4 @@ dependencies:
   - pip
   - pip:
     - HTSeq==0.12.4
-    - multiqc==1.10
+    - multiqc==1.15

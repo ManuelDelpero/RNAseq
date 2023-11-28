@@ -16,5 +16,5 @@ dependencies:
   - r-data.table=1.14.2
   - pip
   - pip:
-    - HTSeq==0.12.4
+    - HTSeq
     - multiqc==1.15

@@ -41,7 +41,7 @@ docker run \
   -v /path/to/results/:/results \
   rnaseq \
   conda run -n RNAseq snakemake --cores 20
-```
+
 
 Output directory structure:
 

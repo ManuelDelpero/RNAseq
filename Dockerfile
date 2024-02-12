@@ -29,11 +29,3 @@ ENV SNAKEMAKE_CORES=1
 
 # Ensure the container is executable
 CMD ["/bin/bash"]
-
-# How to execute
-docker run \
-  -v /Data/RNA_09/V350199664/L01/sub/docker_test/config.yaml:/app/config.yaml \
-  -v /Data/RNA_09/V350199664/L01/sub/:/data \
-  -v /Data/RNA_09/V350199664/L01/sub/docker_test/results/:/results \
-  rnaseq \
-  conda run -n RNAseq snakemake --cores 20

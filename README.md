@@ -24,7 +24,24 @@ This will create a new environment called "RNAseq" and install all the required 
    ```bash
    conda activate RNAseq
    snakemake --cores <num_cores>
+   ```
+## Docker Integration
 
+Prefer Docker? Utilize our Dockerfile to build the image and run the pipeline within a Docker container. The built image includes all dependencies and the GRCh38 reference genome. The configfile can be downaloded from the repository.
+If using Docker the only paramenters to modify in the config file are the samples, computing_threads, and tertiary.
+
+Build and run the pipeline using Docker:
+
+```bash
+docker build -t rnaseq .
+
+docker run \
+  -v /path/to/config.yaml:/app/config.yaml \
+  -v /path/to/raw_data/:/data \
+  -v /path/to/results/:/results \
+  rnaseq \
+  conda run -n RNAseq snakemake --cores 20
+```
 
 Output directory structure:
 

@@ -1,27 +1,24 @@
 ### REQUIRED ARGUMENTS BY USER
 rawdir:
-  '/scripts/test/fastq'
+  '/data'
 output_dir:
-  '/output'
+  '/results'
+
 group1: [
-  'simulated1',
-  'simulated2'
+  'sample1'
 ]
 group2: [
-  'simulated3',
-  'simulated4'
+  'sample2'
 ]
 samples: [
-  'simulated1',
-  'simulated2',
-  'simulated3',
-  'simulated4'
+  'sample1',
+  'sample2',
 ]
 ref:
-  '/scripts/test/lambda-phage.fa'
+  '/app/reference/homo_sapiens.GRCh38.dna.primary_assembly.fa'
 
 gtf_annotation_file:
-  'annotation/gene-locations-hg38.csv.gz'
+  '/app/annotation/Homo_sapiens.GRCh38.110.gtf'
   
 computing_threads:
   8

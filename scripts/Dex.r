@@ -2,9 +2,13 @@ args <- commandArgs(trailingOnly = TRUE)
 counts_files <- strsplit(args[1], " ")[[1]]
 group1 <- args[2]
 group2 <- args[3]
-output_dir <- paste0(gsub("counts/sample1_count.txt", "", counts_files[1]), "dex")
+output_dir_base <- dirname(dirname(counts_files[1]))
+output_dir <- file.path(output_dir_base, "dex")
 print(output_dir)
 
+if (!dir.exists(output_dir)) {
+  dir.create(output_dir, recursive = TRUE)
+}
 
 # Load required packages
 #install.packages('BiocManager', repos = "https://cran.rstudio.com/")
@@ -22,7 +26,7 @@ for (file in counts_files){
   counts <- data.frame(counts)
   rownames(counts) <- counts[,1]
   count <- data.frame(counts[,-1])
-  rownames(count) <- counts[,1] 
+  rownames(count) <- counts[,1]
   counts_combined <- cbind(counts_combined, count)
   sample_name <- gsub("_counts.txt", "", basename(file))
   samples_names <- c(samples_names, sample_name)

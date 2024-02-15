@@ -20,15 +20,22 @@ num_threads = config['computing_threads']
 results_counts = expand(count_dir + '/{sample}_count.txt', sample = SAMPLES)
 results_fastqc = expand(qc_dir + '/fastqc/{sample}_sorted_fastqc.html', sample = SAMPLES)
 results_qualimap = expand(qc_dir + '/qualimap/{sample}/qualimapReport.html', sample = SAMPLES)
-results_dex = expand(output_dir + '/dex/Volcano_Plot.pdf')
+results_dex = output_dir + '/dex/Volcano_Plot.pdf'
 
-rule all:
-    input:
-        results_counts + 
-        results_fastqc +
-        results_qualimap +
-        results_dex
-
+if len(config['group1']) >= 3 and len(config['group2']) >= 3:
+    rule all:
+        input:
+            results_counts + 
+            results_fastqc +
+            results_qualimap +
+            results_dex
+else:
+    rule all:
+        input:
+            results_counts + 
+            results_fastqc +
+            results_qualimap
+    
 rule fastp:
     """
     Trim reads and perform QC using fastp with raw fastq
@@ -74,7 +81,6 @@ rule hisat2_index:
             exit 1
         fi
         """
-
 
 rule hisat2:
     """
@@ -186,7 +192,7 @@ rule qualimap:
         qualimap bamqc -bam {input.bam} -outdir {qc_dir}/qualimap/{wildcards.sample}/ --java-mem-size=30000M &> {log}
         """
 
-if len(config['group1']) > 3 and len(config['group2']) > 3:
+if len(config['group1']) >= 3 and len(config['group2']) >= 3:
     rule deseq2:
         input:
             counts = expand(count_dir + '/{sample}_count.txt', sample=SAMPLES)
@@ -209,9 +215,6 @@ if len(config['group1']) > 3 and len(config['group2']) > 3:
             '''
 else:
     print("Not enaugh samples to perform DE analysis, at least 3 samples per group are needed")
-    volcano_plot_path = os.path.join(deseq2_dir, 'Volcano_Plot.pdf')
-    os.makedirs(deseq2_dir, exist_ok=True)
-    open(volcano_plot_path, 'w').close()
       
 onsuccess:
     shell('multiqc {output_dir} -o {output_dir}')

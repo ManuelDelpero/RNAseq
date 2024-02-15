@@ -21,7 +21,7 @@ RUN mkdir -p /app/annotation
 RUN wget -q -O /app/reference/homo_sapiens.GRCh38.dna.primary_assembly.fa.gz https://ftp.ensembl.org/pub/release-110/fasta/homo_sapiens/dna/Homo_sapiens.GRCh38.dna.primary_assembly.fa.gz \
     && gunzip /app/reference/homo_sapiens.GRCh38.dna.primary_assembly.fa.gz
 
-RUN wget -q -O /app/annotation/Homo_sapiens.GRCh38.110.gtf.gz http://ftp.ensembl.org/pub/release-110/gtf/homo_sapiens/Homo_sapiens.GRCh38.110.gtf.gz
+RUN wget -q -O /app/annotation/Homo_sapiens.GRCh38.110.gtf.gz http://ftp.ensembl.org/pub/release-110/gtf/homo_sapiens/Homo_sapiens.GRCh38.110.gtf.gz \
     && gunzip /app/annotation/Homo_sapiens.GRCh38.110.gtf.gz
 
 # Set an environment variable for the default number of cores
